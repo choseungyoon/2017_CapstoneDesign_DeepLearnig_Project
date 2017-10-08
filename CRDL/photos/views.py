@@ -4,6 +4,8 @@ from .models import Photo
 from .forms import PhotoForm
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def hello(request):
@@ -20,6 +22,7 @@ def detail(request, pk):
     )
     return HttpResponse('\n'.join(messages))
 
+@login_required
 def create(request):
     if request.method == "GET":
         form = PhotoForm()
@@ -27,12 +30,14 @@ def create(request):
         form = PhotoForm(request.POST, request.FILES)
 
         if form.is_valid():
-            obj = form.save()
+            obj = form.save(commit=False)
+            obj.user = request.user
+            obj.save()
+
             return redirect(obj)
 
     ctx = {
         'form': form,
     }
-
 
     return render(request, 'edit.html', ctx)

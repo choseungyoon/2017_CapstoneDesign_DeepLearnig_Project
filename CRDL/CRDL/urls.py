@@ -45,6 +45,7 @@ urlpatterns = [
             'next_page': settings.LOGIN_URL,
         }
     ),
+    url(r'^users/', include('profiles.urls')),
 
 ]
 
