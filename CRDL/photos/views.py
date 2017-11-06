@@ -6,6 +6,9 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from .forms import UserForm
+from django.contrib.auth.models import User
+from django.contrib.auth import login
 
 # Create your views here.
 def hello(request):
@@ -41,3 +44,15 @@ def create(request):
     }
 
     return render(request, 'edit.html', ctx)
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            new_user = User.objects.create_user(**form.cleaned_data)
+            login(request, new_user)
+            return redirect('')
+
+        else:
+            form = UserForm()
+            return render(request, 'progiles/signup.html', {'form': form})
