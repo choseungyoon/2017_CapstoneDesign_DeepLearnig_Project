@@ -10,6 +10,9 @@ from .forms import UserForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 
+import os
+import sys
+
 # Create your views here.
 def hello(request):
     return HttpResponse('HELLO WORLD!')
@@ -23,6 +26,20 @@ def detail(request, pk):
         '<p>주소는 {url}</p>'.format(url=photo.image.url),
         '<p><img src="{url}" /></p>'.format(url=photo.image.url),
     )
+
+    #FACE RECOGNITION
+    client_id = "5zovqRQc2MKOPbpBMOvA"
+    client_secret = "L2gb7YtMce"
+    url = "https://openapi.naver.com/v1/vision/face"  # 얼굴감지
+    files = {'image': open('uploads/2017/11/07/orig/3.jpg', 'rb')}
+    headers = {'X-Naver-Client-Id': client_id, 'X-Naver-Client-Secret': client_secret}
+    response = HttpResponse.post(url, files=files, headers=headers)
+    rescode = response.status_code
+    if (rescode == 200):
+        print (response.text)
+    else:
+        print("Error Code:" + rescode)
+
     return HttpResponse('\n'.join(messages))
 
 @login_required
